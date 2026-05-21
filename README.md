@@ -42,6 +42,7 @@ Deferred:
 Prerequisites:
 
 - Python 3.12.
+- Python venv support. On Ubuntu 24.04, install it with `sudo apt-get install -y python3.12-venv`.
 - Git.
 - A DeepSeek API key.
 
@@ -50,8 +51,8 @@ git clone https://github.com/xixinw/DeepHitix.git
 cd DeepHitix
 python -m venv .venv
 source .venv/bin/activate
-pip install -U pip uv
-uv pip install -e ".[web]"
+python -m pip install -U pip
+python -m pip install -e ".[web,homeassistant]"
 ```
 
 Create your runtime data directory and config:

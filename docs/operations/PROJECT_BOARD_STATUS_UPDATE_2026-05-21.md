@@ -6,8 +6,8 @@ Purpose: correct stale Phase 5 status text that remains in `PROJECT_BOARD.md` fr
 
 Phase 5: Public Alpha Packaging / Upstream PR Branches.
 
-Current M5 progress: approximately 86%.
-Overall project progress: approximately 94%.
+Current M5 progress: approximately 95%.
+Overall project progress: approximately 97%.
 
 ## Corrected Status
 
@@ -51,13 +51,26 @@ Docker Compose static validation:
 PASS: Docker Compose validation base is structurally sound
 ```
 
-## Release Packaging Status
-
-Default image coordinates:
+Source install/runtime smoke:
 
 ```text
-ghcr.io/weiha/deepseek-native-agent:v0.1.0-alpha.1
-ghcr.io/weiha/deepseek-native-agent:public-alpha
+PASS: python -m pip install -e ".[web,homeassistant]"
+PASS: isolated gateway API health at 127.0.0.1:18644
+PASS: /v1/models with bearer auth
+```
+
+## Release Packaging Status
+
+Source repository:
+
+```text
+https://github.com/xixinw/DeepHitix
+```
+
+Published source main:
+
+```text
+2ba5b56248618cabea6607b28802dc30d56fa3a9
 ```
 
 Release notes draft:
@@ -66,7 +79,7 @@ Release notes draft:
 docs/operations/RELEASE_NOTES_v0.1.0-alpha.1.md
 ```
 
-Published-image smoke plan:
+Superseded published-image smoke plan:
 
 ```text
 docs/operations/PUBLISHED_IMAGE_SMOKE_2026-05-21.md
@@ -92,16 +105,25 @@ docs/operations/PUBLIC_ALPHA_SOURCE_MANIFEST_2026-05-21.md
 
 Decision: exclude `scripts/whatsapp-bridge` from v0.1.0-alpha.1 public package until its GPL/LGPL dependency obligations are reviewed.
 
-## Current Blocker
+## Current Status
 
-The published-image smoke is ready but not executed. The release candidate image has been built locally on the Linux Docker host and the import probe passed, but push to GHCR failed with a token scope mismatch.
+The alpha release path is now source-first. The public source repository has been published and verified from a fresh clone.
 
-It is now blocked on:
+Verification:
 
 ```text
-GHCR token with write:packages/read:packages permission for ghcr.io/weiha/deepseek-native-agent
-optional Feishu credentials + human tester for Feishu smoke
+repository visibility: public
+fresh local clone: PASS
+compose validation from fresh clone: PASS
+forbidden release paths absent: PASS
+remote token residue in git config: PASS
+Linux Docker host existing Hermes container: healthy and untouched
+source install/runtime smoke: PASS
 ```
+
+The earlier published-image smoke is no longer the release blocker. The release candidate image build proved the Docker layer can import, but the prebuilt-image path is superseded because the upstream-runtime artifact is too large for this alpha.
+
+Historical superseded token checks from the abandoned GHCR path:
 
 2026-05-21 second token check:
 
@@ -123,4 +145,4 @@ reported token scopes include read:packages: NO
 GHCR docker login: FAIL
 ```
 
-No published image success should be claimed until a Linux host has pulled the registry tag and run compose with `--no-build`.
+No published image success is claimed for v0.1.0-alpha.1.

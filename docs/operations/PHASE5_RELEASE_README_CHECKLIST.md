@@ -34,7 +34,8 @@ Ship a public-alpha quality DeepHitix source repository that a technical user ca
 | Public alpha source archive | PASS | `docs/operations/PUBLIC_ALPHA_SOURCE_MANIFEST_2026-05-21.md` |
 | Release candidate image local build | PASS | `docs/operations/PUBLISHED_IMAGE_BUILD_ATTEMPT_2026-05-21.md` |
 | Release candidate image import probe | PASS | `docs/operations/PUBLISHED_IMAGE_BUILD_ATTEMPT_2026-05-21.md` |
-| Public source repository | IN PROGRESS | Source-first release replaces unsuitable large prebuilt image path |
+| Public source repository | PASS | `https://github.com/xixinw/DeepHitix` published and clean-clone verified |
+| Source install/runtime smoke | PASS | `docs/operations/SOURCE_INSTALL_RUNTIME_SMOKE_2026-05-21.md` |
 | Published registry tag | DROPPED FOR ALPHA | 8GB-class upstream-runtime image is not acceptable for v0.1.0-alpha.1 |
 | Published-image smoke plan | SUPERSEDED | Source repository + local build instructions are the alpha path |
 
@@ -45,12 +46,12 @@ The root README is release-ready only when it answers these in the first screen 
 - What this is: DeepSeek-native, cost-visible, self-hosted Agent assistant.
 - What this is not: not official Hermes / DeepSeek / Reasonix.
 - Who it is for: personal developers, small teams, domestic-cloud users.
-- Fastest path: Docker Compose quick start.
+- Fastest path: source clone + Python environment setup.
 - Verified path: Linux systemd + Feishu guide.
 - Required secrets: `DEEPSEEK_API_KEY`, `API_SERVER_KEY`, optional `FEISHU_*`.
 - Safety defaults: API bound to localhost, Telegram/Weixin disabled, Feishu opt-in.
 - Cost/privacy contract: telemetry records token/cost/cache/model metadata, not prompt/response/tool content.
-- Current alpha limitations: no Windows native installer, no platform matrix beyond Feishu, registry tag pending until tested.
+- Current alpha limitations: no Windows native installer, no platform matrix beyond Feishu, no prebuilt registry image for this alpha.
 
 ## Release artifact checklist
 
@@ -64,7 +65,7 @@ The root README is release-ready only when it answers these in the first screen 
 - [x] Docker + Feishu smoke report exists: `docs/operations/DOCKER_FEISHU_SMOKE_2026-05-19.md`.
 - [x] Add release notes for first alpha tag after tag name is chosen: `docs/operations/RELEASE_NOTES_v0.1.0-alpha.1.md`.
 - [x] Record short-name branding recommendation: `docs/operations/BRANDING_DECISION_2026-05-21.md`.
-- [ ] Add final 30-minute README walkthrough evidence after running against the release tag, not just local build.
+- [x] Add final README source install/runtime evidence after running against the public-alpha source package.
 
 ### Packaging
 
@@ -78,8 +79,8 @@ The root README is release-ready only when it answers these in the first screen 
 - [x] Stage source archive and release scripts on Linux Docker host.
 - [x] Build release candidate image from prepared clean branch 5 source package.
 - [x] Run release candidate image local import probe.
-- [ ] Push public alpha source repository.
-- [ ] Verify source repository clone/install instructions.
+- [x] Push public alpha source repository.
+- [x] Verify source repository clone and static install instructions.
 
 2026-05-21 correction: the release should not be centered on GHCR image coordinates. The earlier prebuilt image path pulled in the full upstream Hermes runtime and produced an unsuitable 8GB-class artifact.
 
@@ -88,6 +89,16 @@ source repo: https://github.com/xixinw/DeepHitix
 ```
 
 The alpha release should publish source and environment instructions. Docker remains optional for users who want to build locally.
+
+Published source verification:
+
+```text
+repository: https://github.com/xixinw/DeepHitix
+main: 2ba5b56248618cabea6607b28802dc30d56fa3a9
+fresh local clone: PASS
+python deploy/validate_compose.py from fresh clone: PASS
+forbidden release paths absent: PASS
+```
 
 ### Compliance / safety
 
@@ -116,7 +127,7 @@ The alpha release should publish source and environment instructions. Docker rem
 
 ## 30-minute README walkthrough script
 
-Use this as the release candidate verification path on a clean Linux host:
+Use this as the optional Docker verification path on a clean Linux host after the source clone path is understood:
 
 ```bash
 git clone <release-repo-url> deepseek-native-agent
