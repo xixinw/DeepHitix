@@ -1,0 +1,33 @@
+FROM python:3.12-slim
+
+USER root
+WORKDIR /opt/hermes
+
+ARG PIP_INDEX_URL=
+ARG PIP_EXTRA_INDEX_URL=
+
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    HERMES_HOME=/opt/data \
+    PATH=/opt/hermes/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+COPY . /opt/hermes
+
+RUN set -eux; \
+    groupadd --system hermes; \
+    useradd --system --gid hermes --home-dir /opt/data --create-home hermes; \
+    python3 -m venv /opt/hermes/.venv; \
+    pip_args=""; \
+    if [ -n "${PIP_INDEX_URL}" ]; then pip_args="$pip_args --index-url ${PIP_INDEX_URL}"; fi; \
+    if [ -n "${PIP_EXTRA_INDEX_URL}" ]; then pip_args="$pip_args --extra-index-url ${PIP_EXTRA_INDEX_URL}"; fi; \
+    /opt/hermes/.venv/bin/pip install $pip_args uv; \
+    uv pip install --python /opt/hermes/.venv/bin/python3 $pip_args -e ".[web]"; \
+    uv pip install --python /opt/hermes/.venv/bin/python3 $pip_args \
+      "lark-oapi==1.5.3" \
+      "qrcode==7.4.2"; \
+    /opt/hermes/.venv/bin/python3 -c "import importlib.util, sys; required=['fastapi','uvicorn','lark_oapi','qrcode','agent.routing_policy','agent.cost_telemetry']; missing=[name for name in required if importlib.util.find_spec(name) is None]; sys.exit(f'missing modules: {missing}') if missing else print('SLIM_IMAGE_IMPORT_PROBE_PASS')"; \
+    chown -R hermes:hermes /opt/hermes /opt/data
+
+VOLUME ["/opt/data"]
+USER hermes
+ENTRYPOINT ["hermes"]

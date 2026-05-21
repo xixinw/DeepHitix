@@ -1,0 +1,11 @@
+# Keep runtime state and secrets out of Docker build context.
+.env
+.env.*
+!.env.example
+data/
+logs/
+*.pem
+*.key
+*.crt
+__pycache__/
+*.pyc
